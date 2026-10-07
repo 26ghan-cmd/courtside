@@ -38,7 +38,8 @@ class GameListing(BaseModel):
 
 class TeamStat(BaseModel):
     name: str  # machine name, e.g. "fieldGoalsMade-fieldGoalsAttempted"
-    label: str  # "FG"
+    label: str  # display label, e.g. "Rebounds"
+    abbreviation: str = ""  # short form, e.g. "REB" (falls back to label)
     value: str  # "25-58"
 
 

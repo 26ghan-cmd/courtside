@@ -102,6 +102,7 @@ def parse_summary(event_id: str, data: dict) -> GameDetail:
             TeamStat(
                 name=s.get("name", ""),
                 label=s.get("label") or s.get("abbreviation", ""),
+                abbreviation=s.get("abbreviation") or s.get("label", ""),
                 value=str(s.get("displayValue", "")),
             )
             for s in t.get("statistics", [])

@@ -63,7 +63,8 @@ def main():
                 {"team": HOME, "statistics": [
                     {"name": "fieldGoalsMade-fieldGoalsAttempted", "label": "FG",
                      "displayValue": "6-12"},
-                    {"name": "fieldGoalPct", "label": "FG%", "displayValue": "50.0"},
+                    {"name": "fieldGoalPct", "label": "Field Goal %", "abbreviation": "FG%",
+                     "displayValue": "50"},
                     {"name": "threePointFieldGoalsMade-threePointFieldGoalsAttempted",
                      "label": "3PT", "displayValue": "2-5"}]},
                 {"team": AWAY, "statistics": [

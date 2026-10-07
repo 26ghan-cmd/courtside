@@ -37,12 +37,22 @@ document.querySelectorAll<HTMLButtonElement>(".tabs button").forEach((btn) => {
 });
 
 // ---------------------------------------------------------------- game selection
+// The date picker lets you browse past games, e.g. last season's while it's the offseason.
+function localISODate(d = new Date()): string {
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 10);
+}
+
 async function loadPicker(): Promise<void> {
   const select = $<HTMLSelectElement>("game-select");
+  const dateInput = $<HTMLInputElement>("date-input");
+  const iso = dateInput.value || localISODate();
+  const isToday = iso === localISODate();
+  select.replaceChildren(el("option", { value: "", textContent: "Loading games…" }));
   try {
-    const games = await api.games();
+    const games = await api.games(iso.replaceAll("-", ""));
+    const empty = isToday ? "No games today. Pick another date above." : "No games on this date";
     select.replaceChildren(
-      el("option", { value: "", textContent: games.length ? "Choose a game…" : "No games today" }),
+      el("option", { value: "", textContent: games.length ? `Choose a game (${games.length})…` : empty }),
       ...games.map((g) =>
         el("option", {
           value: g.id,
@@ -53,8 +63,15 @@ async function loadPicker(): Promise<void> {
   } catch {
     select.replaceChildren(el("option", { value: "", textContent: "Backend offline — is it running?" }));
   }
-  select.addEventListener("change", () => select.value && selectGame(select.value));
+  // Keep the current game selected if it's in this date's list.
+  if (gameId && [...select.options].some((o) => o.value === gameId)) select.value = gameId;
 }
+
+$<HTMLSelectElement>("game-select").addEventListener("change", (ev) => {
+  const value = (ev.target as HTMLSelectElement).value;
+  if (value) selectGame(value);
+});
+$<HTMLInputElement>("date-input").addEventListener("change", () => loadPicker());
 
 async function detectFromActiveTab(): Promise<void> {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -110,7 +127,7 @@ function renderStats(d: GameDetail): void {
   const { home, away } = d.game;
   const labels = ["FG", "3PT", "FT", "REB", "AST", "TO", "STL", "BLK"];
   const statOf = (tid: string, label: string) =>
-    d.team_stats[tid]?.find((s) => s.label === label || s.name === label)?.value ?? "–";
+    d.team_stats[tid]?.find((s) => s.abbreviation === label || s.label === label)?.value ?? "–";
 
   const teamTable = el("table", {},
     el("tr", {}, el("th"), el("th", { textContent: away.abbreviation }), el("th", { textContent: home.abbreviation })),
@@ -163,7 +180,7 @@ function renderAnalysis(d: GameDetail, a: Analysis): void {
     a.runs.length
       ? el("ul", {}, ...a.runs.slice(0, 5).map((r) =>
           el("li", { textContent: `${names[r.team_id] ?? "?"} ${r.points}-0 (period ${r.period})` })))
-      : el("p", { class: "muted", textContent: "No runs of 7+ yet." }),
+      : el("p", { class: "muted", textContent: d.game.status.state === "post" ? "No one scored 7+ unanswered points." : "No runs of 7+ yet." }),
     el("h3", { textContent: "Shooting" }),
     el("table", {},
       el("tr", {}, el("th"), el("th", { textContent: "FG%" }), el("th", { textContent: "3P%" }), el("th", { textContent: "FT%" })),
@@ -242,4 +259,5 @@ chrome.storage.local.get("name").then(({ name }) => {
 });
 chrome.storage.session.onChanged.addListener(() => detectFromActiveTab());
 chrome.tabs.onActivated.addListener(() => detectFromActiveTab());
+$<HTMLInputElement>("date-input").value = localISODate();
 loadPicker().then(detectFromActiveTab);

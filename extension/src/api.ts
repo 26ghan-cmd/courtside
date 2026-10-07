@@ -29,7 +29,7 @@ export interface GameListing {
   away: Team;
 }
 
-export interface TeamStat { name: string; label: string; value: string }
+export interface TeamStat { name: string; label: string; abbreviation: string; value: string }
 export interface PlayerLine { team_id: string; name: string; starter: boolean; stats: Record<string, string> }
 export interface Play {
   id: string; period: number; clock: string; text: string; team_id: string | null;

@@ -11,8 +11,11 @@
   </header>
 
   <section id="picker" class="picker">
-    <label for="game-select">Pick a game</label>
-    <select id="game-select"><option value="">Loading today's games…</option></select>
+    <div class="picker-row">
+      <label for="game-select">Pick a game</label>
+      <input type="date" id="date-input" aria-label="Game date" />
+    </div>
+    <select id="game-select"><option value="">Loading games…</option></select>
     <p class="hint">Open a supported stream and Courtside will find the game for you.</p>
   </section>
 

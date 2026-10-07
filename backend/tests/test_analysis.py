@@ -29,5 +29,5 @@ def test_analyze_summary_text(summary_detail):
     assert a.summary.startswith("Providence beat Villanova 15-13.")
     assert "9-0 burst by Villanova" in a.summary
     assert "Chris Vale" in a.summary
-    assert a.shooting["222"]["fg_pct"] == 0.5  # from the "FG%" label (ESPN real-data label)
+    assert a.shooting["222"]["fg_pct"] == 0.5  # computed from "6-12"
     assert a.shooting["2507"]["fg_pct"] == 7 / 15  # computed from "7-15"

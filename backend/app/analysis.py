@@ -68,19 +68,21 @@ def scoring_runs(detail: GameDetail, min_points: int = MIN_RUN) -> list[Run]:
     return sorted(runs, key=lambda r: r.points, reverse=True)
 
 
-def _pct(stats: list[TeamStat], made_attempted_label: str, pct_label: str) -> float | None:
-    by_label = {s.label: s.value for s in stats}
-    if pct_label in by_label:
-        try:
-            v = float(by_label[pct_label])
-            return v / 100 if v > 1 else v
-        except ValueError:
-            pass
-    ma = by_label.get(made_attempted_label)
+def _pct(stats: list[TeamStat], made_attempted: str, pct_abbr: str) -> float | None:
+    """Prefer exact made/attempted ("21-55"); fall back to ESPN's rounded percentage."""
+    by_key = {}
+    for st in stats:
+        by_key.setdefault(st.abbreviation, st.value)
+        by_key.setdefault(st.label, st.value)
+    ma = by_key.get(made_attempted)
     if ma and "-" in ma:
         made, att = (int(x) for x in ma.split("-", 1))
         return made / att if att else None
-    return None
+    try:
+        v = float(by_key[pct_abbr])
+        return v / 100 if v > 1 else v
+    except (KeyError, ValueError):
+        return None
 
 
 def shooting(detail: GameDetail) -> dict[str, dict[str, float | None]]:

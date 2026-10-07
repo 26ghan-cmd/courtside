@@ -7,6 +7,11 @@ need() { command -v "$1" >/dev/null 2>&1 || { echo "Missing $1. $2"; exit 1; }; 
 need python3 "Install Python 3.11+ from https://www.python.org/downloads/"
 need node    "Install Node 18+ from https://nodejs.org/"
 need git     "Run: xcode-select --install"
+python3 -c 'import sys; sys.exit(sys.version_info < (3, 11))' || {
+  echo "Python $(python3 -V 2>&1 | cut -d' ' -f2) is too old; Courtside needs 3.11+."
+  echo "Install the latest Python from https://www.python.org/downloads/ and open a new Terminal window."
+  exit 1
+}
 
 echo "==> Backend: creating virtual environment and installing packages"
 cd backend

@@ -59,8 +59,9 @@
      },
      {
       "name": "fieldGoalPct",
-      "label": "FG%",
-      "displayValue": "50.0"
+      "label": "Field Goal %",
+      "abbreviation": "FG%",
+      "displayValue": "50"
      },
      {
       "name": "threePointFieldGoalsMade-threePointFieldGoalsAttempted",

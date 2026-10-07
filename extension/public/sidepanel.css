@@ -26,6 +26,8 @@ body { margin: 0; background: var(--bg); color: var(--fg); }
 
 .picker { padding: 8px 12px; border-bottom: 1px solid var(--line); }
 .picker select { width: 100%; margin-top: 4px; }
+.picker-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.picker-row input { padding: 3px 6px; }
 .hint { color: var(--muted); font-size: 12px; margin: 6px 0 0; }
 
 .tabs { display: flex; border-bottom: 1px solid var(--line); }
