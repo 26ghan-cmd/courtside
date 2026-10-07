@@ -1,0 +1,604 @@
+{
+ "header": {
+  "competitions": [
+   {
+    "date": "2026-03-01T17:00Z",
+    "competitors": [
+     {
+      "id": "222",
+      "homeAway": "home",
+      "score": "13",
+      "team": {
+       "id": "222",
+       "displayName": "Villanova Wildcats",
+       "shortDisplayName": "Villanova",
+       "abbreviation": "VILL",
+       "location": "Villanova"
+      }
+     },
+     {
+      "id": "2507",
+      "homeAway": "away",
+      "score": "15",
+      "team": {
+       "id": "2507",
+       "displayName": "Providence Friars",
+       "shortDisplayName": "Providence",
+       "abbreviation": "PROV",
+       "location": "Providence"
+      }
+     }
+    ],
+    "status": {
+     "period": 2,
+     "displayClock": "0:00",
+     "type": {
+      "state": "post",
+      "shortDetail": "Final",
+      "detail": "Final"
+     }
+    }
+   }
+  ]
+ },
+ "boxscore": {
+  "teams": [
+   {
+    "team": {
+     "id": "222",
+     "displayName": "Villanova Wildcats",
+     "shortDisplayName": "Villanova",
+     "abbreviation": "VILL",
+     "location": "Villanova"
+    },
+    "statistics": [
+     {
+      "name": "fieldGoalsMade-fieldGoalsAttempted",
+      "label": "FG",
+      "displayValue": "6-12"
+     },
+     {
+      "name": "fieldGoalPct",
+      "label": "FG%",
+      "displayValue": "50.0"
+     },
+     {
+      "name": "threePointFieldGoalsMade-threePointFieldGoalsAttempted",
+      "label": "3PT",
+      "displayValue": "2-5"
+     }
+    ]
+   },
+   {
+    "team": {
+     "id": "2507",
+     "displayName": "Providence Friars",
+     "shortDisplayName": "Providence",
+     "abbreviation": "PROV",
+     "location": "Providence"
+    },
+    "statistics": [
+     {
+      "name": "fieldGoalsMade-fieldGoalsAttempted",
+      "label": "FG",
+      "displayValue": "7-15"
+     },
+     {
+      "name": "threePointFieldGoalsMade-threePointFieldGoalsAttempted",
+      "label": "3PT",
+      "displayValue": "3-6"
+     }
+    ]
+   }
+  ],
+  "players": [
+   {
+    "team": {
+     "id": "222",
+     "displayName": "Villanova Wildcats",
+     "shortDisplayName": "Villanova",
+     "abbreviation": "VILL",
+     "location": "Villanova"
+    },
+    "statistics": [
+     {
+      "labels": [
+       "MIN",
+       "PTS",
+       "REB",
+       "AST"
+      ],
+      "athletes": [
+       {
+        "athlete": {
+         "displayName": "Jordan Hart"
+        },
+        "starter": true,
+        "stats": [
+         "32",
+         "9",
+         "4",
+         "3"
+        ]
+       },
+       {
+        "athlete": {
+         "displayName": "Sam Lee"
+        },
+        "starter": true,
+        "stats": [
+         "28",
+         "4",
+         "7",
+         "1"
+        ]
+       },
+       {
+        "athlete": {
+         "displayName": "Bench Guy"
+        },
+        "didNotPlay": true,
+        "stats": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "team": {
+     "id": "2507",
+     "displayName": "Providence Friars",
+     "shortDisplayName": "Providence",
+     "abbreviation": "PROV",
+     "location": "Providence"
+    },
+    "statistics": [
+     {
+      "labels": [
+       "MIN",
+       "PTS",
+       "REB",
+       "AST"
+      ],
+      "athletes": [
+       {
+        "athlete": {
+         "displayName": "Chris Vale"
+        },
+        "starter": true,
+        "stats": [
+         "35",
+         "11",
+         "5",
+         "2"
+        ]
+       },
+       {
+        "athlete": {
+         "displayName": "Max Ortiz"
+        },
+        "starter": false,
+        "stats": [
+         "20",
+         "4",
+         "2",
+         "4"
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "plays": [
+  {
+   "id": "1000",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "19:00"
+   },
+   "text": "Providence scores 2",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": true,
+   "scoreValue": 2,
+   "homeScore": 0,
+   "awayScore": 2
+  },
+  {
+   "id": "2000",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "19:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 0,
+   "awayScore": 2
+  },
+  {
+   "id": "1001",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "18:00"
+   },
+   "text": "Villanova scores 3",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": true,
+   "scoreValue": 3,
+   "homeScore": 3,
+   "awayScore": 2
+  },
+  {
+   "id": "2001",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "18:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 3,
+   "awayScore": 2
+  },
+  {
+   "id": "1002",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "17:00"
+   },
+   "text": "Providence scores 3",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": true,
+   "scoreValue": 3,
+   "homeScore": 3,
+   "awayScore": 5
+  },
+  {
+   "id": "2002",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "17:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 3,
+   "awayScore": 5
+  },
+  {
+   "id": "1003",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "16:00"
+   },
+   "text": "Villanova scores 2",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": true,
+   "scoreValue": 2,
+   "homeScore": 5,
+   "awayScore": 5
+  },
+  {
+   "id": "2003",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "16:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 5,
+   "awayScore": 5
+  },
+  {
+   "id": "1004",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "15:00"
+   },
+   "text": "Villanova scores 2",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": true,
+   "scoreValue": 2,
+   "homeScore": 7,
+   "awayScore": 5
+  },
+  {
+   "id": "2004",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "15:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 7,
+   "awayScore": 5
+  },
+  {
+   "id": "1005",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "14:00"
+   },
+   "text": "Villanova scores 3",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": true,
+   "scoreValue": 3,
+   "homeScore": 10,
+   "awayScore": 5
+  },
+  {
+   "id": "2005",
+   "period": {
+    "number": 1
+   },
+   "clock": {
+    "displayValue": "14:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 10,
+   "awayScore": 5
+  },
+  {
+   "id": "1006",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "13:00"
+   },
+   "text": "Villanova scores 2",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": true,
+   "scoreValue": 2,
+   "homeScore": 12,
+   "awayScore": 5
+  },
+  {
+   "id": "2006",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "13:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 12,
+   "awayScore": 5
+  },
+  {
+   "id": "1007",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "12:00"
+   },
+   "text": "Providence scores 2",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": true,
+   "scoreValue": 2,
+   "homeScore": 12,
+   "awayScore": 7
+  },
+  {
+   "id": "2007",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "12:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 12,
+   "awayScore": 7
+  },
+  {
+   "id": "1008",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "11:00"
+   },
+   "text": "Providence scores 3",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": true,
+   "scoreValue": 3,
+   "homeScore": 12,
+   "awayScore": 10
+  },
+  {
+   "id": "2008",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "11:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 12,
+   "awayScore": 10
+  },
+  {
+   "id": "1009",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "10:00"
+   },
+   "text": "Providence scores 3",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": true,
+   "scoreValue": 3,
+   "homeScore": 12,
+   "awayScore": 13
+  },
+  {
+   "id": "2009",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "10:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 12,
+   "awayScore": 13
+  },
+  {
+   "id": "1010",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "9:00"
+   },
+   "text": "Villanova scores 1",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": true,
+   "scoreValue": 1,
+   "homeScore": 13,
+   "awayScore": 13
+  },
+  {
+   "id": "2010",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "9:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "222"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 13,
+   "awayScore": 13
+  },
+  {
+   "id": "1011",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "8:00"
+   },
+   "text": "Providence scores 2",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": true,
+   "scoreValue": 2,
+   "homeScore": 13,
+   "awayScore": 15
+  },
+  {
+   "id": "2011",
+   "period": {
+    "number": 2
+   },
+   "clock": {
+    "displayValue": "8:30"
+   },
+   "text": "Defensive rebound",
+   "team": {
+    "id": "2507"
+   },
+   "scoringPlay": false,
+   "scoreValue": 0,
+   "homeScore": 13,
+   "awayScore": 15
+  }
+ ]
+}

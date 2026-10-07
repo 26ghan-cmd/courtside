@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Courtside</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <header id="scorebug" class="scorebug empty">
+    <span id="status-text">No game selected</span>
+  </header>
+
+  <section id="picker" class="picker">
+    <label for="game-select">Pick a game</label>
+    <select id="game-select"><option value="">Loading today's games…</option></select>
+    <p class="hint">Open a supported stream and Courtside will find the game for you.</p>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="stats" aria-selected="true">Stats</button>
+    <button role="tab" data-tab="analysis" aria-selected="false">Analysis</button>
+    <button role="tab" data-tab="chat" aria-selected="false">Chat</button>
+  </nav>
+
+  <main>
+    <section id="tab-stats" class="tab"></section>
+    <section id="tab-analysis" class="tab" hidden></section>
+    <section id="tab-chat" class="tab" hidden>
+      <div id="room-controls" class="room-controls">
+        <input id="name-input" placeholder="Your name" maxlength="24" />
+        <button id="create-room">Start a room</button>
+        <input id="room-input" placeholder="Room code" />
+        <button id="join-room">Join</button>
+      </div>
+      <div id="room-info" class="room-info" hidden></div>
+      <ul id="messages" class="messages"></ul>
+      <form id="chat-form" class="chat-form" hidden>
+        <input id="chat-input" placeholder="Say something…" maxlength="500" autocomplete="off" />
+        <button>Send</button>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>

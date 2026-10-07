@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Courtside",
+  "version": "0.1.0",
+  "description": "Live stats, game analysis, and a watch-party chat for college basketball streams.",
+  "action": { "default_title": "Open Courtside" },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "side_panel": { "default_path": "sidepanel.html" },
+  "permissions": ["sidePanel", "storage", "tabs"],
+  "host_permissions": ["http://localhost:8000/*"],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.espn.com/watch/*",
+        "https://plus.espn.com/*",
+        "https://www.peacocktv.com/*",
+        "https://www.foxsports.com/*",
+        "https://www.cbssports.com/*",
+        "https://www.paramountplus.com/*",
+        "https://play.max.com/*",
+        "https://tv.youtube.com/*",
+        "https://www.youtube.com/*",
+        "https://www.fubo.tv/*",
+        "https://watch.sling.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
