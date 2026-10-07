@@ -64,7 +64,7 @@ async function loadPicker(): Promise<void> {
     select.replaceChildren(el("option", { value: "", textContent: "Backend offline — is it running?" }));
   }
   // Keep the current game selected if it's in this date's list.
-  if (gameId && [...select.options].some((o) => o.value === gameId)) select.value = gameId;
+  if (gameId && Array.from(select.options).some((o) => o.value === gameId)) select.value = gameId;
 }
 
 $<HTMLSelectElement>("game-select").addEventListener("change", (ev) => {

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc && cp -R public/. dist/",
+    "build": "mkdir -p dist && cp -R public/. dist/ && tsc",
     "watch": "cp -R public/. dist/ && tsc --watch",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
