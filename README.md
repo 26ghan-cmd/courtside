@@ -6,6 +6,8 @@ A Chrome extension for watching college basketball. While you watch a stream, it
 - **Analysis:** an auto-written game summary, lead changes, scoring runs, and shooting splits
 - **Watch-party chat:** start a room, share the code, and chat with friends during the game
 
+More features are coming soon. Very exciting!
+
 Stats come from ESPN's public (unofficial) college basketball endpoints.
 
 ## Layout
