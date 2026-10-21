@@ -1,0 +1,186 @@
+[
+ {
+  "id": "41",
+  "location": "UConn",
+  "name": "Huskies",
+  "displayName": "UConn Huskies",
+  "shortDisplayName": "UConn",
+  "abbreviation": "CONN"
+ },
+ {
+  "id": "2599",
+  "location": "St. John's",
+  "name": "Red Storm",
+  "displayName": "St. John's Red Storm",
+  "shortDisplayName": "St John's",
+  "abbreviation": "SJU"
+ },
+ {
+  "id": "193",
+  "location": "Miami (OH)",
+  "name": "RedHawks",
+  "displayName": "Miami (OH) RedHawks",
+  "shortDisplayName": "Miami OH",
+  "abbreviation": "M-OH"
+ },
+ {
+  "id": "2649",
+  "location": "Toledo",
+  "name": "Rockets",
+  "displayName": "Toledo Rockets",
+  "shortDisplayName": "Toledo",
+  "abbreviation": "TOL"
+ },
+ {
+  "id": "2390",
+  "location": "Miami",
+  "name": "Hurricanes",
+  "displayName": "Miami Hurricanes",
+  "shortDisplayName": "Miami",
+  "abbreviation": "MIA"
+ },
+ {
+  "id": "150",
+  "location": "Duke",
+  "name": "Blue Devils",
+  "displayName": "Duke Blue Devils",
+  "shortDisplayName": "Duke",
+  "abbreviation": "DUKE"
+ },
+ {
+  "id": "127",
+  "location": "Michigan State",
+  "name": "Spartans",
+  "displayName": "Michigan State Spartans",
+  "shortDisplayName": "Michigan St",
+  "abbreviation": "MSU"
+ },
+ {
+  "id": "130",
+  "location": "Michigan",
+  "name": "Wolverines",
+  "displayName": "Michigan Wolverines",
+  "shortDisplayName": "Michigan",
+  "abbreviation": "MICH"
+ },
+ {
+  "id": "2306",
+  "location": "Kansas State",
+  "name": "Wildcats",
+  "displayName": "Kansas State Wildcats",
+  "shortDisplayName": "Kansas St",
+  "abbreviation": "KSU"
+ },
+ {
+  "id": "2305",
+  "location": "Kansas",
+  "name": "Jayhawks",
+  "displayName": "Kansas Jayhawks",
+  "shortDisplayName": "Kansas",
+  "abbreviation": "KU"
+ },
+ {
+  "id": "152",
+  "location": "NC State",
+  "name": "Wolfpack",
+  "displayName": "NC State Wolfpack",
+  "shortDisplayName": "NC State",
+  "abbreviation": "NCSU"
+ },
+ {
+  "id": "153",
+  "location": "North Carolina",
+  "name": "Tar Heels",
+  "displayName": "North Carolina Tar Heels",
+  "shortDisplayName": "North Carolina",
+  "abbreviation": "UNC"
+ },
+ {
+  "id": "145",
+  "location": "Ole Miss",
+  "name": "Rebels",
+  "displayName": "Ole Miss Rebels",
+  "shortDisplayName": "Ole Miss",
+  "abbreviation": "MISS"
+ },
+ {
+  "id": "221",
+  "location": "Pittsburgh",
+  "name": "Panthers",
+  "displayName": "Pittsburgh Panthers",
+  "shortDisplayName": "Pitt",
+  "abbreviation": "PITT"
+ },
+ {
+  "id": "245",
+  "location": "Texas A&M",
+  "name": "Aggies",
+  "displayName": "Texas A&M Aggies",
+  "shortDisplayName": "Texas A&M",
+  "abbreviation": "TA&M"
+ },
+ {
+  "id": "99",
+  "location": "LSU",
+  "name": "Tigers",
+  "displayName": "LSU Tigers",
+  "shortDisplayName": "LSU",
+  "abbreviation": "LSU"
+ },
+ {
+  "id": "2608",
+  "location": "Saint Mary's",
+  "name": "Gaels",
+  "displayName": "Saint Mary's Gaels",
+  "shortDisplayName": "Saint Mary's",
+  "abbreviation": "SMC"
+ },
+ {
+  "id": "2350",
+  "location": "Loyola Chicago",
+  "name": "Ramblers",
+  "displayName": "Loyola Chicago Ramblers",
+  "shortDisplayName": "Loyola Chicago",
+  "abbreviation": "LUC"
+ },
+ {
+  "id": "219",
+  "location": "Pennsylvania",
+  "name": "Quakers",
+  "displayName": "Pennsylvania Quakers",
+  "shortDisplayName": "Penn",
+  "abbreviation": "PENN"
+ },
+ {
+  "id": "213",
+  "location": "Penn State",
+  "name": "Nittany Lions",
+  "displayName": "Penn State Nittany Lions",
+  "shortDisplayName": "Penn State",
+  "abbreviation": "PSU"
+ },
+ {
+  "id": "2428",
+  "location": "North Carolina Central",
+  "name": "Eagles",
+  "displayName": "North Carolina Central Eagles",
+  "shortDisplayName": "NC Central",
+  "abbreviation": "NCCU"
+ },
+ {
+  "id": "222",
+  "location": "Villanova",
+  "name": "Wildcats",
+  "displayName": "Villanova Wildcats",
+  "shortDisplayName": "Villanova",
+  "abbreviation": "VILL"
+ },
+ {
+  "id": "96",
+  "location": "Kentucky",
+  "name": "Wildcats",
+  "displayName": "Kentucky Wildcats",
+  "shortDisplayName": "Kentucky",
+  "abbreviation": "UK"
+ }
+]

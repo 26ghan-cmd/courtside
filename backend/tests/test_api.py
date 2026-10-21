@@ -48,3 +48,12 @@ def test_chat_room(client):
 def test_missing_room(client):
     with client.websocket_connect("/rooms/nope/ws") as ws:
         assert ws.receive_json()["type"] == "error"
+
+
+def test_join_page(client):
+    room = client.post("/rooms", json={}).json()
+    r = client.get(f"/join/{room['id']}")
+    assert r.status_code == 200 and room["id"] in r.text and "invited" in r.text
+    gone = client.get("/join/nope123")
+    assert gone.status_code == 404 and "closed" in gone.text
+    assert client.get("/join/<script>").status_code == 404

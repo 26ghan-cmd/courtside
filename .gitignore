@@ -8,3 +8,6 @@ node_modules/
 extension/dist/
 .DS_Store
 .env
+
+# ESPN full team list (large; tests use tests/fixtures/teams_subset.json)
+backend/tests/fixtures/teams.json

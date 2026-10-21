@@ -15,6 +15,7 @@ class Team(BaseModel):
     name: str  # "Villanova Wildcats"
     short_name: str  # "Villanova"
     abbreviation: str  # "VILL"
+    location: str = ""  # "Villanova", "Miami (OH)"
     logo: str | None = None
     score: int = 0
     home: bool = False

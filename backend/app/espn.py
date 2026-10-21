@@ -42,6 +42,7 @@ def parse_team(c: dict) -> Team:
         name=t.get("displayName", ""),
         short_name=t.get("shortDisplayName") or t.get("location", ""),
         abbreviation=t.get("abbreviation", ""),
+        location=t.get("location", ""),
         logo=t.get("logo") or (t.get("logos") or [{}])[0].get("href"),
         score=_int(c.get("score")),
         home=c.get("homeAway") == "home",

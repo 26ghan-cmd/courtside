@@ -12,6 +12,11 @@ export interface DetectedGame {
 const key = (tabId: number) => `tab:${tabId}`;
 
 chrome.runtime.onMessage.addListener((msg, sender) => {
+  if (msg?.type === "invite" && typeof msg.id === "string") {
+    // The side panel picks this up (now if it's open, or when it next opens).
+    chrome.storage.local.set({ pendingRoom: { id: msg.id, server: msg.server } });
+    return;
+  }
   if (msg?.type !== "stream-detected" || sender.tab?.id === undefined) return;
   const tabId = sender.tab.id;
   loadApiBase() // the service worker restarts often; re-read the saved server each time

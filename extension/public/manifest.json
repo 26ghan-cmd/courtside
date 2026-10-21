@@ -1,13 +1,37 @@
 {
   "manifest_version": 3,
   "name": "Courtside",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Live stats, game analysis, and a watch-party chat for college basketball streams.",
-  "action": { "default_title": "Open Courtside" },
-  "background": { "service_worker": "background.js", "type": "module" },
-  "side_panel": { "default_path": "sidepanel.html" },
-  "permissions": ["sidePanel", "storage", "tabs"],
-  "host_permissions": ["http://localhost:8000/*", "https://*.onrender.com/*"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Open Courtside",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "http://localhost:8000/*",
+    "https://*.onrender.com/*"
+  ],
   "content_scripts": [
     {
       "matches": [
@@ -23,7 +47,19 @@
         "https://www.fubo.tv/*",
         "https://watch.sling.com/*"
       ],
-      "js": ["content.js"],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://courtside-api-qd40.onrender.com/join/*",
+        "http://localhost:8000/join/*"
+      ],
+      "js": [
+        "join.js"
+      ],
       "run_at": "document_idle"
     }
   ]

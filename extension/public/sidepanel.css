@@ -72,3 +72,9 @@ button { cursor: pointer; }
 .settings-row { display: flex; gap: 6px; margin-bottom: 6px; }
 .settings-row input { flex: 1; min-width: 0; }
 .settings .link-button { display: block; margin: 4px 0; font-size: 12px; }
+
+.banner { display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 10px 12px;
+  background: var(--card); border-bottom: 1px solid var(--line); font-size: 12px; }
+.banner button { flex: none; font-size: 12px; padding: 4px 8px; }
+.room-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.room-actions button { font-size: 12px; padding: 4px 8px; }

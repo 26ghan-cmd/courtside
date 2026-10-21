@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Join a Courtside room</title>
+<style>
+:root{--bg:#fff;--fg:#16181d;--muted:#6b7280;--line:#e5e7eb;--accent:#e8590c}
+@media (prefers-color-scheme:dark){:root{--bg:#121417;--fg:#eceef1;--muted:#9aa1ab;--line:#2a2e35}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}
+main{max-width:480px;margin:12vh auto;padding:0 20px}
+h1{font-size:1.5rem;margin:0 0 8px} p{color:var(--muted)}
+.code{font:600 2rem/1 ui-monospace,monospace;letter-spacing:.06em;padding:16px;border:1px solid var(--line);border-radius:10px;text-align:center;margin:20px 0}
+button{font:inherit;padding:8px 14px;border-radius:8px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+#status{margin-top:20px;font-weight:600;color:var(--fg)}
+</style></head><body><main>
+<h1>$title</h1>
+<p>$lead</p>
+<div class="code" id="code">$room_id</div>
+<button id="copy" type="button">Copy code</button>
+<p id="status" data-room="$room_id" data-open="$open">$status</p>
+</main>
+<script>
+document.getElementById("copy").onclick=async e=>{try{await navigator.clipboard.writeText("$room_id");e.target.textContent="Copied"}catch{}};
+</script></body></html>

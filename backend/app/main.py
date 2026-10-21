@@ -8,10 +8,13 @@ from __future__ import annotations
 
 import re
 from contextlib import asynccontextmanager
+from pathlib import Path
+from string import Template
 
 import httpx
 from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 from .analysis import analyze
@@ -30,7 +33,7 @@ async def lifespan(app: FastAPI):
     await app.state.espn.aclose()
 
 
-app = FastAPI(title="Courtside", version="0.1.0", lifespan=lifespan)
+app = FastAPI(title="Courtside", version="1.0.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origin_regex=r"^chrome-extension://.*$|^http://localhost(:\d+)?$",
@@ -107,6 +110,30 @@ async def get_room(room_id: str) -> dict:
     if not room:
         raise HTTPException(404, "Room not found")
     return {"id": room.id, "game_id": room.game_id, "users": room.users()}
+
+
+JOIN_PAGE = Template((Path(__file__).parent / "join.html").read_text())
+
+
+@app.get("/join/{room_id}", response_class=HTMLResponse)
+async def join_page(room_id: str):
+    """Invite link target. With Courtside installed, the extension reads the
+    code from this page and joins the room when its side panel opens."""
+    if not re.fullmatch(r"[A-Za-z0-9_-]{1,32}", room_id):
+        raise HTTPException(404, "Room not found")
+    room = app.state.rooms.get(room_id)
+    if room:
+        title, lead = "You're invited to a Courtside watch party", (
+            "Open the Courtside side panel (click its icon in Chrome's toolbar) "
+            "and you'll join this room automatically. Or enter the code yourself:")
+        status = "Don't have Courtside yet? Ask whoever sent this link for the extension."
+    else:
+        title, lead = "This room has closed", (
+            "Rooms close when the server restarts. Ask your friend to start a new one.")
+        status = ""
+    page = JOIN_PAGE.substitute(title=title, lead=lead, room_id=room_id, status=status,
+                                open="1" if room else "0")
+    return HTMLResponse(page, status_code=200 if room else 404)
 
 
 @app.websocket("/rooms/{room_id}/ws")

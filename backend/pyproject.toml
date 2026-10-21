@@ -1,6 +1,6 @@
 [project]
 name = "courtside-backend"
-version = "0.1.0"
+version = "1.0.0"
 description = "Stats, analysis, and watch-party chat backend for the Courtside extension"
 requires-python = ">=3.11"
 dependencies = [
@@ -19,6 +19,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["app"]
+
+[tool.setuptools.package-data]
+app = ["*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

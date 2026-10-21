@@ -43,6 +43,39 @@ document.querySelectorAll<HTMLButtonElement>(".tabs button").forEach((btn) => {
   });
 });
 
+// ---------------------------------------------------------------- connection banner
+// A free Render server sleeps after 15 idle minutes and takes about a minute
+// to wake, so a failed request usually means "wait", not "broken".
+const RETRY_MS = 10_000;
+const MAX_RETRIES = 12; // ~2 minutes
+let bannerRetries = 0;
+let bannerTimer: number | undefined;
+
+function serverDown(): void {
+  window.clearTimeout(bannerTimer);
+  const waking = bannerRetries < MAX_RETRIES;
+  $("banner-text").textContent = waking
+    ? "Waking up the Courtside server. This can take about a minute…"
+    : "Can't reach the Courtside server. Check your connection, or the server address in Settings.";
+  $("banner").hidden = false;
+  if (waking) {
+    bannerRetries += 1;
+    bannerTimer = window.setTimeout(retryNow, RETRY_MS);
+  }
+}
+
+function serverUp(): void {
+  window.clearTimeout(bannerTimer);
+  bannerRetries = 0;
+  $("banner").hidden = true;
+}
+
+function retryNow(): void {
+  loadPicker().then(() => refresh());
+}
+
+$("banner-retry").addEventListener("click", () => { bannerRetries = 0; retryNow(); });
+
 // ---------------------------------------------------------------- game selection
 // The date picker lets you browse past games, e.g. last season's while it's the offseason.
 function localISODate(d = new Date()): string {
@@ -67,8 +100,10 @@ async function loadPicker(): Promise<void> {
         }),
       ),
     );
+    serverUp();
   } catch {
-    select.replaceChildren(el("option", { value: "", textContent: "Can't reach the server. A free Render server can take a minute to wake up; check Settings below." }));
+    select.replaceChildren(el("option", { value: "", textContent: "Waiting for the server…" }));
+    serverDown();
   }
   // Keep the current game selected if it's in this date's list.
   if (gameId && Array.from(select.options).some((o) => o.value === gameId)) select.value = gameId;
@@ -112,8 +147,10 @@ async function refresh(): Promise<void> {
     renderAnalysis(detail, analysis);
     renderReplay(detail.game.status.state);
     if (detail.game.status.state === "post" && replayAt === null) window.clearInterval(pollTimer);
+    serverUp();
   } catch (e) {
-    $("status-text")?.replaceChildren(`Couldn't load game: ${(e as Error).message}`);
+    if (e instanceof TypeError) serverDown(); // network failure, not a bad response
+    else $("status-text")?.replaceChildren(`Couldn't load this game: ${(e as Error).message}`);
   } finally {
     inFlight = false;
     if (pendingRefresh) { pendingRefresh = false; refresh(); }
@@ -267,6 +304,15 @@ function renderAnalysis(d: GameDetail, a: Analysis): void {
 }
 
 // ---------------------------------------------------------------- chat
+// Rooms survive brief drops: the socket reconnects with backoff, a ping every
+// 4 minutes keeps a free Render server from sleeping mid-game, and the last
+// room is remembered so reopening the panel rejoins it.
+const PING_MS = 4 * 60_000;
+let roomId: string | null = null;
+let retries = 0;
+let reconnectTimer: number | undefined;
+let pingTimer: number | undefined;
+
 function addMessage(user: string, text: string): void {
   const list = $("messages");
   list.append(el("li", {}, el("b", { textContent: `${user}: ` }), text));
@@ -274,31 +320,132 @@ function addMessage(user: string, text: string): void {
 }
 
 function system(text: string): void {
-  $("messages").append(el("li", { class: "muted", textContent: text }));
+  const list = $("messages");
+  list.append(el("li", { class: "muted", textContent: text }));
+  list.scrollTop = list.scrollHeight;
 }
 
-async function connect(roomId: string): Promise<void> {
-  const nameInput = $<HTMLInputElement>("name-input");
-  const name = nameInput.value.trim() || "guest";
-  await chrome.storage.local.set({ name });
+const inviteLink = (id: string) => `${getApiBase()}/join/${encodeURIComponent(id)}`;
 
-  socket?.close();
-  $("messages").replaceChildren();
-  socket = api.roomSocket(roomId, name);
-  socket.onmessage = (ev) => {
+async function copy(text: string, button: HTMLButtonElement): Promise<void> {
+  const label = button.textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    button.textContent = "Copied";
+  } catch {
+    button.textContent = "Copy failed";
+  }
+  window.setTimeout(() => { button.textContent = label; }, 1500);
+}
+
+function renderRoomInfo(users: string[] = []): void {
+  if (!roomId) return;
+  const id = roomId;
+  const copyLink = el("button", { type: "button", textContent: "Copy invite link" });
+  copyLink.addEventListener("click", () => copy(inviteLink(id), copyLink));
+  const copyCode = el("button", { type: "button", textContent: "Copy code" });
+  copyCode.addEventListener("click", () => copy(id, copyCode));
+  const leave = el("button", { type: "button", textContent: "Leave" });
+  leave.addEventListener("click", () => leaveRoom());
+  $("room-info").replaceChildren(
+    el("div", {}, "Room ", el("code", { textContent: id }), users.length ? ` · ${users.join(", ")}` : ""),
+    el("div", { class: "room-actions" }, copyLink, copyCode, leave),
+  );
+  $("room-info").hidden = false;
+}
+
+function stopSocket(): void {
+  window.clearTimeout(reconnectTimer);
+  window.clearInterval(pingTimer);
+  if (socket) {
+    socket.onclose = null; // intentional: don't trigger a reconnect
+    socket.close();
+    socket = null;
+  }
+}
+
+function leaveRoom(): void {
+  stopSocket();
+  roomId = null;
+  chrome.storage.local.remove("lastRoom");
+  $("room-info").hidden = true;
+  $("chat-form").hidden = true;
+  system("You left the room.");
+}
+
+async function connect(id: string, fresh = true): Promise<void> {
+  const name = $<HTMLInputElement>("name-input").value.trim() || "guest";
+  await chrome.storage.local.set({ name, lastRoom: id });
+  stopSocket();
+  if (fresh) { $("messages").replaceChildren(); retries = 0; }
+  roomId = id;
+  renderRoomInfo();
+  $("chat-form").hidden = false;
+
+  const ws = api.roomSocket(id, name);
+  socket = ws;
+  ws.onopen = () => {
+    if (retries > 0) system("Reconnected.");
+    retries = 0;
+    pingTimer = window.setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: "ping" }));
+    }, PING_MS);
+  };
+  ws.onmessage = (ev) => {
     const msg = JSON.parse(ev.data) as ServerMessage;
     switch (msg.type) {
-      case "history": msg.messages.forEach((m) => addMessage(m.user, m.text)); break;
-      case "chat": addMessage(msg.user, msg.text); break;
-      case "presence":
-        $("room-info").replaceChildren("Room ", el("code", { textContent: roomId }), ` · ${msg.users.join(", ")}`);
+      case "history":
+        $("messages").replaceChildren(); // avoid duplicates after a reconnect
+        msg.messages.forEach((m) => addMessage(m.user, m.text));
         break;
+      case "chat": addMessage(msg.user, msg.text); break;
+      case "presence": renderRoomInfo(msg.users); break;
       case "error": system(msg.message); break;
     }
   };
-  socket.onclose = () => system("Disconnected.");
-  $("room-info").hidden = false;
-  $("chat-form").hidden = false;
+  ws.onclose = (ev) => {
+    window.clearInterval(pingTimer);
+    if (ev.code === 4404) {
+      // The server restarted (rooms live in memory) or the code is wrong.
+      roomId = null;
+      chrome.storage.local.remove("lastRoom");
+      $("chat-form").hidden = true;
+      $("room-info").hidden = true;
+      system("That room no longer exists. Rooms close when the server restarts, so start a new one.");
+      return;
+    }
+    const delay = Math.min(30_000, 1000 * 2 ** retries);
+    retries += 1;
+    system(`Connection lost. Reconnecting in ${Math.round(delay / 1000)}s…`);
+    reconnectTimer = window.setTimeout(() => connect(id, false), delay);
+  };
+}
+
+async function joinIfOpen(id: string): Promise<boolean> {
+  try {
+    const r = await fetch(`${getApiBase()}/rooms/${encodeURIComponent(id)}`);
+    if (!r.ok) return false;
+  } catch {
+    return false;
+  }
+  await connect(id);
+  return true;
+}
+
+function showChatTab(): void {
+  document.querySelector<HTMLButtonElement>('.tabs button[data-tab="chat"]')?.click();
+}
+
+// An invite link (…/join/<code>) opened in a tab hands its code to the panel.
+async function takePendingInvite(): Promise<void> {
+  const { pendingRoom } = await chrome.storage.local.get("pendingRoom");
+  if (!pendingRoom || typeof pendingRoom !== "object") return;
+  await chrome.storage.local.remove("pendingRoom");
+  const { id, server } = pendingRoom as { id: string; server: string };
+  if (server && server !== getApiBase()) await switchServer(server);
+  showChatTab();
+  $<HTMLInputElement>("room-input").value = id;
+  if (!(await joinIfOpen(id))) system(`Couldn't join room ${id}. It may have closed.`);
 }
 
 $("create-room").addEventListener("click", async () => {
@@ -306,9 +453,9 @@ $("create-room").addEventListener("click", async () => {
     const room = await api.createRoom(gameId);
     $<HTMLInputElement>("room-input").value = room.id;
     await connect(room.id);
-    system(`Share this code with friends: ${room.id}`);
+    system("Room created. Use \"Copy invite link\" to bring friends in.");
   } catch (e) {
-    system(`Couldn't create room: ${(e as Error).message}`);
+    system(`Couldn't create a room: ${(e as Error).message}. Is the server awake?`);
   }
 });
 
@@ -323,6 +470,8 @@ $("chat-form").addEventListener("submit", (ev) => {
   if (socket?.readyState === WebSocket.OPEN && input.value.trim()) {
     socket.send(JSON.stringify({ type: "chat", text: input.value }));
     input.value = "";
+  } else if (input.value.trim()) {
+    system("Not connected yet. Your message wasn't sent.");
   }
 });
 
@@ -335,7 +484,7 @@ function showServer(): void {
 async function switchServer(url: string): Promise<void> {
   await setApiBase(url);
   showServer();
-  socket?.close();
+  stopSocket();
   exitReplay(false);
   const current = gameId;
   gameId = null; // force selectGame to reload from the new server
@@ -356,11 +505,19 @@ $("server-online").addEventListener("click", () => switchServer(ONLINE_API));
 
 // ---------------------------------------------------------------- boot
 chrome.storage.local.get("name").then(({ name }) => {
-  if (name) $<HTMLInputElement>("name-input").value = name;
+  if (typeof name === "string") $<HTMLInputElement>("name-input").value = name;
+});
+chrome.storage.local.onChanged.addListener((changes) => {
+  if (changes.pendingRoom?.newValue) takePendingInvite();
 });
 chrome.storage.session.onChanged.addListener(() => detectFromActiveTab());
 chrome.tabs.onActivated.addListener(() => detectFromActiveTab());
 $<HTMLInputElement>("date-input").value = localISODate();
 loadApiBase()
   .then(() => { showServer(); return loadPicker(); })
-  .then(detectFromActiveTab);
+  .then(detectFromActiveTab)
+  .then(async () => {
+    const { pendingRoom, lastRoom } = await chrome.storage.local.get(["pendingRoom", "lastRoom"]);
+    if (pendingRoom) return takePendingInvite();
+    if (typeof lastRoom === "string" && (await joinIfOpen(lastRoom))) system("Rejoined your last room.");
+  });
