@@ -120,6 +120,7 @@ def parse_summary(event_id: str, data: dict) -> GameDetail:
                     PlayerLine(
                         team_id=tid,
                         name=a.get("athlete", {}).get("displayName", ""),
+                        athlete_id=str(a.get("athlete", {}).get("id", "")),
                         starter=bool(a.get("starter")),
                         stats=dict(zip(labels, a.get("stats", []), strict=False)),
                     )
@@ -136,11 +137,23 @@ def parse_summary(event_id: str, data: dict) -> GameDetail:
             score_value=_int(p.get("scoreValue")),
             home_score=_int(p.get("homeScore")),
             away_score=_int(p.get("awayScore")),
+            period_name=p.get("period", {}).get("displayValue", ""),
+            shooting=bool(p.get("shootingPlay")),
+            points_attempted=_int(p.get("pointsAttempted")),
+            athlete_id=_first_athlete(p),
         )
         for i, p in enumerate(data.get("plays", []))
     ]
 
-    return GameDetail(game=game, team_stats=team_stats, players=players, plays=plays)
+    return GameDetail(game=game, team_stats=team_stats, players=players, plays=plays,
+                      total_plays=len(plays))
+
+
+def _first_athlete(play: dict) -> str | None:
+    parts = play.get("participants") or []
+    if parts and parts[0].get("athlete", {}).get("id"):
+        return str(parts[0]["athlete"]["id"])
+    return None
 
 
 # --------------------------------------------------------------------------- client

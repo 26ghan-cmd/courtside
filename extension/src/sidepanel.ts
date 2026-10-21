@@ -24,6 +24,13 @@ let gameId: string | null = null;
 let pollTimer: number | undefined;
 let socket: WebSocket | null = null;
 
+// Replay mode: step through a finished game as if it were live.
+let replayAt: number | null = null; // null = normal (live/final) view
+let replayTimer: number | undefined;
+let totalPlays = 0;
+let inFlight = false;
+let pendingRefresh = false;
+
 // ---------------------------------------------------------------- tabs
 document.querySelectorAll<HTMLButtonElement>(".tabs button").forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -83,6 +90,7 @@ async function detectFromActiveTab(): Promise<void> {
 
 function selectGame(id: string): void {
   if (id === gameId) return;
+  exitReplay(false);
   gameId = id;
   $<HTMLSelectElement>("game-select").value = id;
   window.clearInterval(pollTimer);
@@ -92,16 +100,79 @@ function selectGame(id: string): void {
 
 async function refresh(): Promise<void> {
   if (!gameId) return;
+  // Replay ticks and slider drags can outpace the network; never stack requests.
+  if (inFlight) { pendingRefresh = true; return; }
+  inFlight = true;
+  const at = replayAt ?? undefined;
   try {
-    const [detail, analysis] = await Promise.all([api.game(gameId), api.analysis(gameId)]);
+    const [detail, analysis] = await Promise.all([api.game(gameId, at), api.analysis(gameId, at)]);
+    totalPlays = detail.total_plays;
     renderScorebug(detail.game);
     renderStats(detail);
     renderAnalysis(detail, analysis);
-    if (detail.game.status.state === "post") window.clearInterval(pollTimer);
+    renderReplay(detail.game.status.state);
+    if (detail.game.status.state === "post" && replayAt === null) window.clearInterval(pollTimer);
   } catch (e) {
     $("status-text")?.replaceChildren(`Couldn't load game: ${(e as Error).message}`);
+  } finally {
+    inFlight = false;
+    if (pendingRefresh) { pendingRefresh = false; refresh(); }
   }
 }
+
+// ---------------------------------------------------------------- replay
+function renderReplay(state: string): void {
+  // Offer replay for finished games; keep the controls while replaying.
+  $("replay").hidden = state !== "post" && replayAt === null;
+  $("replay-start").hidden = replayAt !== null;
+  $("replay-controls").hidden = replayAt === null;
+  if (replayAt === null) return;
+  const slider = $<HTMLInputElement>("replay-slider");
+  slider.max = String(totalPlays);
+  slider.value = String(replayAt);
+  $("replay-label").textContent = `Play ${replayAt} of ${totalPlays}`;
+  $("replay-play").textContent = replayTimer === undefined ? "▶" : "❚❚";
+  $("replay-play").setAttribute("aria-label", replayTimer === undefined ? "Play" : "Pause");
+}
+
+function pauseReplay(): void {
+  window.clearInterval(replayTimer);
+  replayTimer = undefined;
+}
+
+function playReplay(): void {
+  if (replayAt !== null && replayAt >= totalPlays) replayAt = 0; // restart from tip-off
+  replayTimer = window.setInterval(() => {
+    if (replayAt === null) return pauseReplay();
+    const speed = Number($<HTMLSelectElement>("replay-speed").value);
+    replayAt = Math.min(totalPlays, replayAt + speed);
+    if (replayAt >= totalPlays) pauseReplay();
+    refresh();
+  }, 1000);
+  refresh();
+}
+
+function exitReplay(reload = true): void {
+  pauseReplay();
+  if (replayAt === null) return;
+  replayAt = null;
+  if (reload) refresh();
+}
+
+$("replay-start").addEventListener("click", () => {
+  window.clearInterval(pollTimer);
+  replayAt = 0;
+  playReplay();
+});
+$("replay-play").addEventListener("click", () => {
+  if (replayTimer === undefined) playReplay();
+  else { pauseReplay(); refresh(); }
+});
+$<HTMLInputElement>("replay-slider").addEventListener("input", (ev) => {
+  replayAt = Number((ev.target as HTMLInputElement).value);
+  refresh();
+});
+$("replay-exit").addEventListener("click", () => exitReplay());
 
 // ---------------------------------------------------------------- rendering
 function teamCell(t: GameListing["home"], side: "home" | "away"): HTMLElement {
@@ -125,7 +196,9 @@ function renderScorebug(g: GameListing): void {
 
 function renderStats(d: GameDetail): void {
   const { home, away } = d.game;
-  const labels = ["FG", "3PT", "FT", "REB", "AST", "TO", "STL", "BLK"];
+  // Replay snapshots only rebuild shooting and points, so show just those.
+  const replaying = d.replay_at != null;
+  const labels = replaying ? ["FG", "3PT", "FT"] : ["FG", "3PT", "FT", "REB", "AST", "TO", "STL", "BLK"];
   const statOf = (tid: string, label: string) =>
     d.team_stats[tid]?.find((s) => s.abbreviation === label || s.label === label)?.value ?? "–";
 
@@ -137,7 +210,7 @@ function renderStats(d: GameDetail): void {
   );
 
   const playerTable = (teamId: string) => {
-    const cols = ["MIN", "PTS", "REB", "AST"];
+    const cols = replaying ? ["PTS"] : ["MIN", "PTS", "REB", "AST"];
     return el("table", {},
       el("tr", {}, el("th", { textContent: "Player" }), ...cols.map((c) => el("th", { textContent: c }))),
       ...d.players

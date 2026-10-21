@@ -41,6 +41,8 @@ export interface GameDetail {
   team_stats: Record<string, TeamStat[]>;
   players: PlayerLine[];
   plays: Play[];
+  total_plays: number;
+  replay_at: number | null;
 }
 
 export interface Run { team_id: string; points: number; period: number }
@@ -70,8 +72,10 @@ async function get<T>(path: string): Promise<T> {
 export const api = {
   games: (date?: string) => get<GameListing[]>(`/games${date ? `?date=${date}` : ""}`),
   match: (q: string) => get<GameListing | null>(`/games/match?q=${encodeURIComponent(q)}`),
-  game: (id: string) => get<GameDetail>(`/games/${id}`),
-  analysis: (id: string) => get<Analysis>(`/games/${id}/analysis`),
+  // `at` = replay mode: the game as it stood after its first `at` plays.
+  game: (id: string, at?: number) => get<GameDetail>(`/games/${id}${at == null ? "" : `?at=${at}`}`),
+  analysis: (id: string, at?: number) =>
+    get<Analysis>(`/games/${id}/analysis${at == null ? "" : `?at=${at}`}`),
   async createRoom(gameId: string | null): Promise<{ id: string }> {
     const r = await fetch(`${API_BASE}/rooms`, {
       method: "POST",

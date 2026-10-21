@@ -18,6 +18,7 @@ from .analysis import analyze
 from .espn import EspnClient
 from .matching import match_game
 from .models import Analysis, GameDetail, GameListing
+from .replay import replay
 from .rooms import RoomManager
 
 
@@ -71,16 +72,20 @@ async def match(q: str = Query(..., min_length=3), date: str | None = None):
     return match_game(q, await _upstream(espn().scoreboard(date)))
 
 
+ReplayAt = Query(None, ge=0, description="Replay mode: the game as of its first N plays")
+
+
 @app.get("/games/{game_id}", response_model=GameDetail)
-async def game_detail(game_id: str):
+async def game_detail(game_id: str, at: int | None = ReplayAt):
     if not re.fullmatch(r"\d+", game_id):
         raise HTTPException(400, "game_id must be numeric")
-    return await _upstream(espn().game(game_id))
+    detail = await _upstream(espn().game(game_id))
+    return detail if at is None else replay(detail, at)
 
 
 @app.get("/games/{game_id}/analysis", response_model=Analysis)
-async def game_analysis(game_id: str):
-    return analyze(await game_detail(game_id))
+async def game_analysis(game_id: str, at: int | None = ReplayAt):
+    return analyze(await game_detail(game_id, at))
 
 
 # --------------------------------------------------------------------------- rooms

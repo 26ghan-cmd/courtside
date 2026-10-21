@@ -46,6 +46,7 @@ class TeamStat(BaseModel):
 class PlayerLine(BaseModel):
     team_id: str
     name: str
+    athlete_id: str = ""
     starter: bool = False
     stats: dict[str, str]  # label -> value, e.g. {"PTS": "18", "MIN": "31"}
 
@@ -60,6 +61,10 @@ class Play(BaseModel):
     score_value: int = 0
     home_score: int = 0
     away_score: int = 0
+    period_name: str = ""  # "1st Half", "OT"
+    shooting: bool = False  # a shot or free throw attempt
+    points_attempted: int = 0  # 1 = free throw, 2 or 3 = field goal
+    athlete_id: str | None = None  # shooter, for shooting plays
 
 
 class GameDetail(BaseModel):
@@ -67,6 +72,8 @@ class GameDetail(BaseModel):
     team_stats: dict[str, list[TeamStat]]  # team_id -> stats
     players: list[PlayerLine]
     plays: list[Play]
+    total_plays: int = 0  # plays in the full game (differs from len(plays) in replay)
+    replay_at: int | None = None  # set when this is a replayed snapshot
 
 
 class Run(BaseModel):

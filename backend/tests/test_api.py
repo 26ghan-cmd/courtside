@@ -15,6 +15,16 @@ def test_detail_and_analysis(client):
     assert client.get("/games/abc").status_code == 400
 
 
+def test_replay_endpoints(client):
+    r = client.get("/games/401700001", params={"at": 4}).json()
+    assert r["replay_at"] == 4 and len(r["plays"]) == 4 and r["total_plays"] == 24
+    assert (r["game"]["home"]["score"], r["game"]["away"]["score"]) == (3, 2)
+    assert r["game"]["status"]["state"] == "in"
+    a = client.get("/games/401700001/analysis", params={"at": 4}).json()
+    assert a["summary"].startswith("Villanova leads Providence 3-2")
+    assert client.get("/games/401700001", params={"at": -1}).status_code == 422
+
+
 def test_chat_room(client):
     room = client.post("/rooms", json={"game_id": "401700001"}).json()
     with client.websocket_connect(f"/rooms/{room['id']}/ws?name=grant") as a:

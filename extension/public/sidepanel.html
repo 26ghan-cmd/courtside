@@ -19,6 +19,21 @@
     <p class="hint">Open a supported stream and Courtside will find the game for you.</p>
   </section>
 
+  <section id="replay" class="replay" hidden>
+    <button id="replay-start" type="button" class="link-button">Replay this game play by play</button>
+    <div id="replay-controls" class="replay-controls" hidden>
+      <button id="replay-play" type="button" aria-label="Play">▶</button>
+      <input id="replay-slider" type="range" min="0" max="0" value="0" aria-label="Replay position" />
+      <select id="replay-speed" aria-label="Replay speed">
+        <option value="1">1×</option>
+        <option value="5" selected>5×</option>
+        <option value="20">20×</option>
+      </select>
+      <button id="replay-exit" type="button">Exit</button>
+      <span id="replay-label" class="replay-label"></span>
+    </div>
+  </section>
+
   <nav class="tabs" role="tablist">
     <button role="tab" data-tab="stats" aria-selected="true">Stats</button>
     <button role="tab" data-tab="analysis" aria-selected="false">Analysis</button>
