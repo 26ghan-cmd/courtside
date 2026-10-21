@@ -1,0 +1,12 @@
+# Render Blueprint: deploys the Courtside backend as a free web service.
+# Dashboard: New > Blueprint > connect this repo > Deploy Blueprint.
+# Every push to main redeploys automatically.
+services:
+  - type: web
+    name: courtside-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install .
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health

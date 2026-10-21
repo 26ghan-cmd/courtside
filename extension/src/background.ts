@@ -1,4 +1,4 @@
-import { api } from "./api.js";
+import { api, loadApiBase } from "./api.js";
 
 // Clicking the toolbar icon opens the side panel.
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(console.error);
@@ -14,8 +14,8 @@ const key = (tabId: number) => `tab:${tabId}`;
 chrome.runtime.onMessage.addListener((msg, sender) => {
   if (msg?.type !== "stream-detected" || sender.tab?.id === undefined) return;
   const tabId = sender.tab.id;
-  api
-    .match(msg.text)
+  loadApiBase() // the service worker restarts often; re-read the saved server each time
+    .then(() => api.match(msg.text))
     .then(async (game) => {
       if (!game) return;
       const detected: DetectedGame = {

@@ -59,6 +59,17 @@
     </section>
   </main>
 
+  <details class="settings">
+    <summary>Settings</summary>
+    <label for="server-input">Server</label>
+    <div class="settings-row">
+      <input id="server-input" type="url" placeholder="https://courtside-api.onrender.com" spellcheck="false" />
+      <button id="server-save" type="button">Save</button>
+    </div>
+    <button id="server-local" type="button" class="link-button">Use my local backend (localhost:8000)</button>
+    <p id="server-status" class="hint"></p>
+  </details>
+
   <script type="module" src="sidepanel.js"></script>
 </body>
 </html>

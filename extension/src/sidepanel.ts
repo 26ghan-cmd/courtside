@@ -1,4 +1,4 @@
-import { api, type Analysis, type GameDetail, type GameListing, type ServerMessage } from "./api.js";
+import { api, getApiBase, loadApiBase, LOCAL_API, setApiBase, type Analysis, type GameDetail, type GameListing, type ServerMessage } from "./api.js";
 
 const POLL_MS = 15_000;
 
@@ -68,7 +68,7 @@ async function loadPicker(): Promise<void> {
       ),
     );
   } catch {
-    select.replaceChildren(el("option", { value: "", textContent: "Backend offline — is it running?" }));
+    select.replaceChildren(el("option", { value: "", textContent: "Can't reach the server. A free Render server can take a minute to wake up; check Settings below." }));
   }
   // Keep the current game selected if it's in this date's list.
   if (gameId && Array.from(select.options).some((o) => o.value === gameId)) select.value = gameId;
@@ -326,6 +326,33 @@ $("chat-form").addEventListener("submit", (ev) => {
   }
 });
 
+// ---------------------------------------------------------------- settings
+function showServer(): void {
+  $<HTMLInputElement>("server-input").value = getApiBase();
+  $("server-status").textContent = `Connected to ${getApiBase()}`;
+}
+
+async function switchServer(url: string): Promise<void> {
+  await setApiBase(url);
+  showServer();
+  socket?.close();
+  exitReplay(false);
+  const current = gameId;
+  gameId = null; // force selectGame to reload from the new server
+  await loadPicker();
+  if (current) selectGame(current);
+  try {
+    const r = await fetch(`${getApiBase()}/health`);
+    $("server-status").textContent = r.ok ? `Connected to ${getApiBase()}` : `Server answered ${r.status}`;
+  } catch {
+    $("server-status").textContent =
+      "Can't reach that server. A free Render server can take about a minute to wake up.";
+  }
+}
+
+$("server-save").addEventListener("click", () => switchServer($<HTMLInputElement>("server-input").value));
+$("server-local").addEventListener("click", () => switchServer(LOCAL_API));
+
 // ---------------------------------------------------------------- boot
 chrome.storage.local.get("name").then(({ name }) => {
   if (name) $<HTMLInputElement>("name-input").value = name;
@@ -333,4 +360,6 @@ chrome.storage.local.get("name").then(({ name }) => {
 chrome.storage.session.onChanged.addListener(() => detectFromActiveTab());
 chrome.tabs.onActivated.addListener(() => detectFromActiveTab());
 $<HTMLInputElement>("date-input").value = localISODate();
-loadPicker().then(detectFromActiveTab);
+loadApiBase()
+  .then(() => { showServer(); return loadPicker(); })
+  .then(detectFromActiveTab);

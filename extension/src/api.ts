@@ -1,7 +1,28 @@
 // Typed wrappers around the Courtside backend. Mirrors backend/app/models.py.
 
-export const API_BASE = "http://localhost:8000";
-export const WS_BASE = API_BASE.replace(/^http/, "ws");
+// ---------------------------------------------------------------- server address
+// ONLINE_API is the deployed backend (Render). LOCAL_API is `uvicorn` on your Mac.
+// The side panel's Settings can switch between them; the choice is saved per browser.
+export const ONLINE_API = "";
+export const LOCAL_API = "http://localhost:8000";
+let base = ONLINE_API || LOCAL_API;
+
+export const getApiBase = () => base;
+
+export async function loadApiBase(): Promise<string> {
+  try {
+    const { apiBase } = await chrome.storage.local.get("apiBase");
+    if (typeof apiBase === "string" && apiBase) base = apiBase;
+  } catch {
+    // storage unavailable: keep the default
+  }
+  return base;
+}
+
+export async function setApiBase(url: string): Promise<void> {
+  base = url.trim().replace(/\/+$/, "") || ONLINE_API || LOCAL_API;
+  await chrome.storage.local.set({ apiBase: base });
+}
 
 export interface Team {
   id: string;
@@ -64,7 +85,7 @@ export type ServerMessage =
   | { type: "error"; message: string };
 
 async function get<T>(path: string): Promise<T> {
-  const r = await fetch(API_BASE + path);
+  const r = await fetch(base + path);
   if (!r.ok) throw new Error(`${r.status} ${await r.text()}`);
   return r.json() as Promise<T>;
 }
@@ -77,7 +98,7 @@ export const api = {
   analysis: (id: string, at?: number) =>
     get<Analysis>(`/games/${id}/analysis${at == null ? "" : `?at=${at}`}`),
   async createRoom(gameId: string | null): Promise<{ id: string }> {
-    const r = await fetch(`${API_BASE}/rooms`, {
+    const r = await fetch(`${base}/rooms`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ game_id: gameId }),
@@ -86,5 +107,5 @@ export const api = {
     return r.json();
   },
   roomSocket: (roomId: string, name: string) =>
-    new WebSocket(`${WS_BASE}/rooms/${roomId}/ws?name=${encodeURIComponent(name)}`),
+    new WebSocket(`${base.replace(/^http/, "ws")}/rooms/${roomId}/ws?name=${encodeURIComponent(name)}`),
 };
