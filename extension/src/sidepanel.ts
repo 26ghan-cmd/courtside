@@ -1,4 +1,4 @@
-import { api, getApiBase, loadApiBase, LOCAL_API, setApiBase, type Analysis, type GameDetail, type GameListing, type ServerMessage } from "./api.js";
+import { api, getApiBase, loadApiBase, LOCAL_API, ONLINE_API, setApiBase, type Analysis, type GameDetail, type GameListing, type ServerMessage } from "./api.js";
 
 const POLL_MS = 15_000;
 
@@ -352,6 +352,7 @@ async function switchServer(url: string): Promise<void> {
 
 $("server-save").addEventListener("click", () => switchServer($<HTMLInputElement>("server-input").value));
 $("server-local").addEventListener("click", () => switchServer(LOCAL_API));
+$("server-online").addEventListener("click", () => switchServer(ONLINE_API));
 
 // ---------------------------------------------------------------- boot
 chrome.storage.local.get("name").then(({ name }) => {

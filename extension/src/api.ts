@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------- server address
 // ONLINE_API is the deployed backend (Render). LOCAL_API is `uvicorn` on your Mac.
 // The side panel's Settings can switch between them; the choice is saved per browser.
-export const ONLINE_API = "";
+export const ONLINE_API = "https://courtside-api-qd40.onrender.com";
 export const LOCAL_API = "http://localhost:8000";
 let base = ONLINE_API || LOCAL_API;
 

@@ -71,3 +71,4 @@ button { cursor: pointer; }
 .settings label { display: block; margin: 8px 0 4px; }
 .settings-row { display: flex; gap: 6px; margin-bottom: 6px; }
 .settings-row input { flex: 1; min-width: 0; }
+.settings .link-button { display: block; margin: 4px 0; font-size: 12px; }
